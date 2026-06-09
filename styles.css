@@ -302,6 +302,7 @@ iframe {
 .hero-panel-card,
 .credit-card,
 .reel-card,
+.short-form-card,
 .work-card,
 .link-card,
 .contact-card {
@@ -478,7 +479,8 @@ iframe {
 }
 
 .credit-grid,
-.work-grid {
+.work-grid,
+.short-form-grid {
   display: grid;
   gap: 1.25rem;
 }
@@ -543,6 +545,7 @@ iframe {
 .credit-card,
 .work-card,
 .reel-card,
+.short-form-card,
 .link-card {
   border-radius: var(--radius-xl);
   overflow: hidden;
@@ -558,6 +561,7 @@ iframe {
 }
 
 .embed-frame,
+.embed-video-card,
 .embed-image-card,
 .embed-placeholder {
   min-height: 260px;
@@ -571,6 +575,21 @@ iframe {
   height: 100%;
   min-height: 260px;
   border: 0;
+}
+
+.embed-video-card {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.embed-video {
+  width: 100%;
+  height: 100%;
+  max-height: 560px;
+  aspect-ratio: 9 / 16;
+  border-radius: calc(var(--radius-lg) - 4px);
+  background: #10161f;
 }
 
 .embed-image-card {
@@ -658,6 +677,7 @@ iframe {
 .placeholder-inner h3,
 .reel-content h3,
 .credit-content h3,
+.short-form-card h3,
 .work-card h3 {
   margin: 0.8rem 0 0;
   font-size: 1.45rem;
@@ -718,6 +738,7 @@ iframe {
 }
 
 .credit-description,
+.short-form-card p,
 .work-card p,
 .reel-content p {
   margin: 0.8rem 0 0;
@@ -782,10 +803,15 @@ iframe {
   grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
 }
 
+.short-form-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .work-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.short-form-card,
 .work-card {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -904,6 +930,10 @@ iframe {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .short-form-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .secondary-credits-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -928,6 +958,10 @@ iframe {
   .credit-meta,
   .hero-stats {
     grid-template-columns: 1fr;
+  }
+
+  .short-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .secondary-credits-grid {
@@ -976,6 +1010,10 @@ iframe {
     display: grid;
   }
 
+  .short-form-grid {
+    grid-template-columns: 1fr;
+  }
+
   .links-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -987,6 +1025,7 @@ iframe {
   .hero-proof,
   .hero-panel-card,
   .credit-card,
+  .short-form-card,
   .work-card,
   .reel-card,
   .contact-card {
@@ -994,6 +1033,8 @@ iframe {
   }
 
   .embed-frame iframe,
+  .embed-video-card,
+  .embed-video,
   .embed-image,
   .embed-image-card,
   .embed-frame,
