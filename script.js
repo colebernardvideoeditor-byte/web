@@ -149,6 +149,72 @@ const portfolioData = {
       link: "https://www.youtube.com/watch?v=nBDDu2dNTQA"
     }
   ],
+  shortFormWork: [
+    {
+      title: "12 Minutes for a 12-Minute Video",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Hook-led short-form editing focused on fast trims, clean rhythm, and retention-first pacing.",
+      link: "./assets/short-form-work/12-minutes-for-12-minute-video.mp4"
+    },
+    {
+      title: "Just Get in the Game",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Social-first talking-head editing shaped around a quick opening, clarity, and a strong throughline.",
+      link: "./assets/short-form-work/just-get-in-the-game.mp4"
+    },
+    {
+      title: "What Part of the Process Editing and Publishing",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Short-form creator edit balancing structure, message clarity, and steady momentum from line to line.",
+      link: "./assets/short-form-work/what-part-of-the-process-editing-and-publishing.mp4"
+    },
+    {
+      title: "Should I Go on LinkedIn or Facebook",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Platform-native clip editing built for readability, quick engagement, and clear delivery on social feeds.",
+      link: "./assets/short-form-work/should-i-go-on-linkedin-or-facebook.mp4"
+    },
+    {
+      title: "Every Human Is One Project Away",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Retention-focused short-form pacing with emphasis on hook, progression, and clean visual flow.",
+      link: "./assets/short-form-work/every-human-is-one-project-away.mp4"
+    },
+    {
+      title: "I Want to Shoot",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Compact social edit designed to keep momentum high while letting the personality of the speaker carry.",
+      link: "./assets/short-form-work/i-want-to-shoot.mp4"
+    },
+    {
+      title: "Turning Pro Is Easier",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Punchy short-form cut with streamlined pacing, clean beats, and a direct social-first structure.",
+      link: "./assets/short-form-work/turning-pro-is-easier.mp4"
+    },
+    {
+      title: "Everybody's Got a Podcast",
+      category: "Short-Form / Social Clip",
+      role: "Video Editor",
+      description:
+        "Fast, readable short-form editing tailored for creator commentary and feed-friendly audience retention.",
+      link: "./assets/short-form-work/everybodys-got-a-podcast.mp4"
+    }
+  ],
   skills: [
     "Adobe Premiere Pro",
     "After Effects",
@@ -183,6 +249,10 @@ function hasValue(value) {
 
 function withTarget(url) {
   return hasValue(url) ? `href="${escapeHtml(url)}" target="_blank" rel="noreferrer"` : "";
+}
+
+function isDirectVideo(url) {
+  return hasValue(url) && /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url.trim());
 }
 
 function normalizeYoutube(url) {
@@ -248,6 +318,22 @@ function toEmbedUrl(url) {
 }
 
 function createEmbed(label, url, description, image) {
+  if (isDirectVideo(url)) {
+    return `
+      <div class="embed-video-card">
+        <video
+          class="embed-video"
+          controls
+          playsinline
+          preload="metadata"
+        >
+          <source src="${escapeHtml(url)}" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    `;
+  }
+
   const embedUrl = toEmbedUrl(url);
 
   if (embedUrl) {
@@ -524,6 +610,42 @@ function renderFeaturedWork() {
     .join("");
 }
 
+function renderShortFormWork() {
+  const node = document.querySelector("#short-form-grid");
+
+  node.innerHTML = portfolioData.shortFormWork
+    .map((item) => {
+      return `
+        <article class="short-form-card reveal">
+          ${createEmbed(item.title, item.link, `${item.category} sample placeholder. Add a final example link here.`, item.image)}
+          <div class="work-content">
+            <div class="work-topline">
+              <span class="tag">${escapeHtml(item.category)}</span>
+            </div>
+            <h3>${escapeHtml(item.title)}</h3>
+            <p>${escapeHtml(item.description)}</p>
+            <div class="credit-meta">
+              <div class="meta-card">
+                <span class="meta-label">Category</span>
+                <p>${escapeHtml(item.category)}</p>
+              </div>
+              <div class="meta-card">
+                <span class="meta-label">Role</span>
+                <p>${escapeHtml(item.role)}</p>
+              </div>
+            </div>
+            <div class="card-actions">
+              <a class="button button-primary button-small" href="${escapeHtml(item.link)}" target="_blank" rel="noreferrer">
+                Open Video
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
 function renderSkills() {
   const node = document.querySelector("#skills-grid");
   node.innerHTML = portfolioData.skills
@@ -578,31 +700,48 @@ function renderLinks() {
 function setupScrollSpy() {
   const navLinks = [...document.querySelectorAll(".site-nav a")];
   const sections = navLinks
-    .map((link) => document.querySelector(link.getAttribute("href")))
-    .filter(Boolean);
+    .map((link) => ({
+      link,
+      section: document.querySelector(link.getAttribute("href"))
+    }))
+    .filter((item) => item.section);
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-          return;
-        }
+  function updateActiveLink() {
+    const headerHeight = document.querySelector(".site-header")?.offsetHeight || 0;
+    const scrollMarker = window.scrollY + headerHeight + 140;
+    const hashMatch = sections.find(({ link, section }) => {
+      if (link.getAttribute("href") !== window.location.hash) {
+        return false;
+      }
 
-        navLinks.forEach((link) => {
-          link.classList.toggle(
-            "is-active",
-            link.getAttribute("href") === `#${entry.target.id}`
-          );
-        });
+      const bounds = section.getBoundingClientRect();
+      return bounds.top <= headerHeight + 220 && bounds.bottom > headerHeight + 80;
+    });
+
+    if (hashMatch) {
+      navLinks.forEach((link) => {
+        link.classList.toggle("is-active", link === hashMatch.link);
       });
-    },
-    {
-      threshold: 0.45,
-      rootMargin: "-20% 0px -35% 0px"
+      return;
     }
-  );
 
-  sections.forEach((section) => observer.observe(section));
+    let activeId = sections[0]?.section.id;
+
+    sections.forEach(({ section }) => {
+      if (section.offsetTop <= scrollMarker) {
+        activeId = section.id;
+      }
+    });
+
+    navLinks.forEach((link) => {
+      link.classList.toggle("is-active", link.getAttribute("href") === `#${activeId}`);
+    });
+  }
+
+  window.addEventListener("scroll", updateActiveLink, { passive: true });
+  window.addEventListener("resize", updateActiveLink);
+  window.addEventListener("hashchange", updateActiveLink);
+  updateActiveLink();
 }
 
 function setupReveal() {
@@ -634,6 +773,7 @@ function init() {
   renderFeaturedCredits();
   renderSecondaryCredits();
   renderReel();
+  renderShortFormWork();
   renderFeaturedWork();
   renderSkills();
   renderLinks();
