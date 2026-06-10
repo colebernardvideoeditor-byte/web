@@ -616,7 +616,7 @@ function renderShortFormWork() {
   node.innerHTML = portfolioData.shortFormWork
     .map((item) => {
       return `
-        <article class="short-form-card reveal">
+        <article class="short-form-card">
           ${createEmbed(item.title, item.link, `${item.category} sample placeholder. Add a final example link here.`, item.image)}
           <div class="work-content">
             <div class="work-topline">
